@@ -3,4 +3,4 @@
 For run node.js server:
   $ ./run_server.sh
 
-For start play visit [localhost](localhost:3000)
+For start play visit [localhost](http://127.0.0.1:3000)
