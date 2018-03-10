@@ -1,6 +1,6 @@
 # agario_like_game
 
-For run node.js server:
+To run node.js server:
 ```
   $ ./run_server.sh
 ```
