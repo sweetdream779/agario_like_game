@@ -7,14 +7,6 @@ Dependencies:
   $ sudo apt install nodejs-legacy
 ```
 
-For configure package:
-```
-  $ sudo apt install npm
-  $ npm init
-  $ npm install express --save
-  $ npm install socket.io --save
-```
-
 To run node.js server:
 ```
   $ ./run_server.sh
