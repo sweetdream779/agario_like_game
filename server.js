@@ -43,11 +43,6 @@ function Blob(id, x, y, r) {
   this.r = r;
 }
 
-function Score(id,score){
-  this.id = id;
-  this.score = score;
-}
-
 // Using express: http://expressjs.com/
 var express = require('express');
 // Create the app
@@ -67,10 +62,22 @@ function listen() {
 
 app.use(express.static('public'));
 
-
 // WebSocket Portion
 // WebSockets work with the HTTP server
 var io = require('socket.io')(server);
+
+var other_server = require("socket.io-client")('http://localhost:3030'); // This is a client connecting to the server 2
+
+other_server.on("connect",
+  function(){
+    other_server.on('server2_heartbeat',function(data){
+        // We received a message from Server 2
+        //console.log("Socket-client recieve msg from server2");
+        scores = data.scores;
+    });
+
+
+});
 
 setInterval(heartbeat, 40);
 
@@ -83,8 +90,6 @@ function heartbeat() {
         }
   io.sockets.emit('heartbeat', data);
 }
-
-
 
 // Register a callback function to run when we have an individual connection
 // This is run for each individual user that connects
@@ -99,20 +104,19 @@ io.sockets.on('connection',
         if(blobs.length<1){
           miniblobs = createMiniBlobs(nMiniblobs);
         }
-        var sc = new Score(socket.id, 0);
-        scores.push(sc);
         console.log(socket.id + " " + data.x + " " + data.y + " " + data.r);
         var blob = new Blob(socket.id, data.x, data.y, data.r);
         blobs.push(blob);
+
+        dataForServer2 = { id: socket.id}
+        other_server.emit('new_client', dataForServer2);
       }
     );
 
 
     socket.on('update',
       function(data) {
-        //console.log(socket.id + " " + data.x + " " + data.y + " " + data.r);
         var blob;
-        var sc;
         miniblobs = data.miniblobs;
         //console.log("Recieved " + miniblobs.length + " miniblobs from "+socket.id);
         for (var i = 0; i < blobs.length; i++) {
@@ -122,18 +126,16 @@ io.sockets.on('connection',
           }
         }
 
-        for (var i = 0; i < scores.length; i++) {
-          if (socket.id == scores[i].id) {
-            sc = scores[i];
-            break;
-          }
+        dataForServer2 = { 
+          id: socket.id,
+          score: data.r
         }
-        
+
+        other_server.emit('update_score', dataForServer2);
+
         blob.x = data.x;
         blob.y = data.y;
         blob.r = data.r;
-
-        sc.score = data.r;
 
         var length = miniblobs.length;
         if(length < nMiniblobs){
@@ -146,9 +148,13 @@ io.sockets.on('connection',
       blobs = blobs.filter(function( obj ) {
           return obj.id !== socket.id;
       });
-      scores = scores.filter(function( obj ) {
-          return obj.id !== socket.id;
-      });
+
+      dataForServer2 = { 
+        id: socket.id
+      }
+
+      other_server.emit('delete_score', dataForServer2);
+
       console.log("Client " + socket.id+ " has disconnected");
     });
 

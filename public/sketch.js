@@ -14,6 +14,9 @@ var scal = 2;
 var w = 1000;
 var h = 800;
 
+var name = "<%= name %>";
+console.log("name: " + name);
+
 function setup() {
   createCanvas(w, h);
   // Start a socket connection to the server
@@ -74,7 +77,7 @@ function draw() {
   for(var i = 0; i < scores.length; i++){
     textSize(10);
     var res = str(scores[i].id).concat("         ");
-    var len = 10;
+    var len = 20;
     var name =  res.substr(0, len);
     text(name + ": " + str(parseInt(scores[i].score)), 50, 30+13*i);
   }
