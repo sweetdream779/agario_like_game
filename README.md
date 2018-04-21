@@ -22,7 +22,7 @@ Error: listen EADDRINUSE :::3000
 ```
 just use a single command to close all the running node processes:
 ```
-ps aux | awk '/node/{print $2}' | xargs kill -9
+  $ ps aux | awk '/node/{print $2}' | xargs kill -9
 ```
 
 For start playing visit [localhost](http://127.0.0.1:3000).To move your blob, hold the left mouse button and move the mouse. To become bigger eat smaller blobs, but do not forget, that players whose blobs are bigger than yours can eat you too.
