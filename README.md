@@ -1,6 +1,7 @@
 # agario_like_game
 This is the game similar to [Agar.io](http://agar.io/).
 
+<img src="animation.gif" title="game animation"/>
 
 Dependencies:
 ```
